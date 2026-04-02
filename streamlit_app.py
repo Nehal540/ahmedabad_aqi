@@ -1,19 +1,25 @@
 import streamlit as st
 from streamlit_gsheets import GSheetsConnection
 
+# 1. Setup the Page
 st.set_page_config(page_title="Designstorm 10X", layout="wide")
-st.title("🚀 Designstorm 10X Status")
 
-# Create connection
+# 2. Connect to your Google Sheet
+# We use st.connection to make it talk to your link
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-# Read the data (using your specific link)
+# 3. Read your data
 url = "https://docs.google.com/spreadsheets/d/1FLvc6FoVIQlO5-7rY88NWhmuaaU4jK-Bw8L6TzeW-nk/edit#gid=2091390401"
 df = conn.read(spreadsheet=url, ttl=0)
 
-# Simple Sidebar Filter
-member = st.sidebar.selectbox("Select Team Member", df['Team Member'].unique())
+# 4. Design the UI
+st.title("🚀 Designstorm 10X Dashboard")
 
-# Display Data
-st.subheader(f"Current Progress for {member}")
-st.dataframe(df[df['Team Member'] == member])
+# Sidebar for choosing a team member
+st.sidebar.header("Navigation")
+member = st.sidebar.selectbox("Choose a Member", df['Team Member'].unique())
+
+# Main Display Area
+st.header(f"Project: {member}")
+filtered_data = df[df['Team Member'] == member]
+st.table(filtered_data) # This shows a clean, non-editable table
